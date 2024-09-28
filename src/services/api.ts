@@ -1,4 +1,4 @@
-import { BlogPost, Project } from '@/types'
+import { BlogPost, Project, Comment } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
 
@@ -73,4 +73,65 @@ export async function getBlogPosts(searchTerm: string = ''): Promise<BlogPost[]>
     variables: { searchTerm },
   })
   return data.blogPosts.data
+}
+
+export async function getBlogPost(id: string): Promise<BlogPost> {
+  const data = await fetchAPI(`
+    query GetBlogPost($id: ID!) {
+      blogPost(id: $id) {
+        data {
+          id
+          attributes {
+            title
+            content
+            date
+            author
+          }
+        }
+      }
+    }
+  `, {
+    variables: { id },
+  })
+  return data.blogPost.data
+}
+
+export async function getComments(postId: string): Promise<Comment[]> {
+  const data = await fetchAPI(`
+    query GetComments($postId: ID!) {
+      comments(filters: { post: { id: { eq: $postId } } }) {
+        data {
+          id
+          attributes {
+            content
+            author
+            createdAt
+          }
+        }
+      }
+    }
+  `, {
+    variables: { postId },
+  })
+  return data.comments.data
+}
+
+export async function postComment(postId: string, content: string, author: string): Promise<Comment> {
+  const data = await fetchAPI(`
+    mutation CreateComment($postId: ID!, $content: String!, $author: String!) {
+      createComment(data: { content: $content, author: $author, post: $postId }) {
+        data {
+          id
+          attributes {
+            content
+            author
+            createdAt
+          }
+        }
+      }
+    }
+  `, {
+    variables: { postId, content, author },
+  })
+  return data.createComment.data
 }
