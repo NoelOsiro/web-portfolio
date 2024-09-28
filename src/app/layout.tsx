@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { AnimatePresence, motion } from "framer-motion";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ThemeProvider>
         <div className="flex flex-col min-h-screen">
           <Header />
           <AnimatePresence mode="wait">
@@ -46,6 +48,8 @@ export default function RootLayout({
           </AnimatePresence>
           <Footer />
         </div>
+        </ThemeProvider>
+        
       </body>
     </html>
   );

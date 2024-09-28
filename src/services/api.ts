@@ -1,3 +1,5 @@
+import { BlogPost, Project } from '@/types'
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
 
 async function fetchAPI(query: string, { variables }: { variables?: any } = {}) {
@@ -21,7 +23,7 @@ async function fetchAPI(query: string, { variables }: { variables?: any } = {}) 
   return json.data
 }
 
-export async function getProjects() {
+export async function getProjects(): Promise<Project[]> {
   const data = await fetchAPI(`
     query {
       projects {
@@ -38,6 +40,9 @@ export async function getProjects() {
               }
             }
             technologies
+            longDescription
+            githubUrl
+            liveUrl
           }
         }
       }
@@ -46,10 +51,13 @@ export async function getProjects() {
   return data.projects.data
 }
 
-export async function getBlogPosts() {
+export async function getBlogPosts(searchTerm: string = ''): Promise<BlogPost[]> {
   const data = await fetchAPI(`
-    query {
-      blogPosts {
+    query GetBlogPosts($searchTerm: String) {
+      blogPosts(filters: { or: [
+        { title: { containsi: $searchTerm } },
+        { content: { containsi: $searchTerm } }
+      ]}) {
         data {
           id
           attributes {
@@ -61,6 +69,8 @@ export async function getBlogPosts() {
         }
       }
     }
-  `)
+  `, {
+    variables: { searchTerm },
+  })
   return data.blogPosts.data
 }

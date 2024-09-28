@@ -1,4 +1,15 @@
+'use client'
+
 import { motion } from 'framer-motion'
+
+const skills = [
+  { name: 'JavaScript', level: 90 },
+  { name: 'React', level: 85 },
+  { name: 'Node.js', level: 80 },
+  { name: 'TypeScript', level: 75 },
+  { name: 'GraphQL', level: 70 },
+  { name: 'Python', level: 65 },
+]
 
 export default function About() {
   return (
@@ -20,7 +31,7 @@ export default function About() {
         <div>
           <h2 className="text-2xl font-semibold mb-4">My Journey</h2>
           <p className="mb-4">
-            I&apos;m a passionate software developer with a focus on web technologies. My journey in the world of programming began [Your Start Year] when I first discovered the power of creating things with code.
+            I am a passionate software developer with a focus on web technologies. My journey in the world of programming began [Your Start Year] when I first discovered the power of creating things with code.
           </p>
           <p className="mb-4">
             Since then, I&apos;ve worked on a variety of projects, from small websites to large-scale applications, always striving to learn and improve my skills.
@@ -28,15 +39,28 @@ export default function About() {
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-4">Skills & Expertise</h2>
-          <ul className="list-disc list-inside space-y-2">
-            <li>JavaScript / TypeScript</li>
-            <li>React.js / Next.js</li>
-            <li>Node.js / Express.js</li>
-            <li>HTML5 / CSS3 / Tailwind CSS</li>
-            <li>SQL / NoSQL Databases</li>
-            <li>Git / Version Control</li>
-            <li>RESTful APIs / GraphQL</li>
-            <li>Test-Driven Development</li>
+          <ul className="space-y-4">
+            {skills.map((skill, index) => (
+              <motion.li 
+                key={skill.name}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+              >
+                <div className="flex justify-between mb-1">
+                  <span className="font-medium">{skill.name}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{skill.level}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <motion.div 
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${skill.level}%` }}
+                    transition={{ duration: 1, delay: index * 0.1 }}
+                  ></motion.div>
+                </div>
+              </motion.li>
+            ))}
           </ul>
         </div>
       </motion.div>
@@ -51,7 +75,7 @@ export default function About() {
           I believe in writing clean, maintainable code and staying up-to-date with the latest industry trends and best practices. My goal is to create efficient, scalable solutions that solve real-world problems.
         </p>
         <p>
-          When I am not coding, you can find me [Your Hobbies or Interests]. I am always excited to take on new challenges and collaborate on interesting projects.
+          When I&apos;m not coding, you can find me [Your Hobbies or Interests]. I am always excited to take on new challenges and collaborate on interesting projects.
         </p>
       </motion.div>
     </div>
