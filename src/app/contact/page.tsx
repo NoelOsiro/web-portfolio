@@ -13,16 +13,29 @@ type FormData = {
 export default function Contact() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log(data)
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (response.ok) {
+        setSubmitStatus('success')
+        reset()
+      } else {
+        setSubmitStatus('error')
+      }
+    } catch (error) {
+      setSubmitStatus('error')
+    }
     setIsSubmitting(false)
-    setSubmitSuccess(true)
-    reset()
   }
 
   return (
@@ -43,17 +56,17 @@ export default function Contact() {
         transition={{ delay: 0.2, duration: 0.5 }}
       >
         <div className="mb-4">
-          <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+          <label htmlFor="name" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Name</label>
           <input
             {...register('name', { required: 'Name is required' })}
             id="name"
             type="text"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
           {errors.name && <p className="text-red-500 text-xs italic">{errors.name.message}</p>}
         </div>
         <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+          <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Email</label>
           <input
             {...register('email', { 
               required: 'Email is required',
@@ -64,16 +77,16 @@ export default function Contact() {
             })}
             id="email"
             type="email"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
           {errors.email && <p className="text-red-500 text-xs italic">{errors.email.message}</p>}
         </div>
         <div className="mb-6">
-          <label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">Message</label>
+          <label htmlFor="message" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Message</label>
           <textarea
             {...register('message', { required: 'Message is required' })}
             id="message"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           ></textarea>
           {errors.message && <p className="text-red-500 text-xs italic">{errors.message.message}</p>}
         </div>
@@ -85,11 +98,11 @@ export default function Contact() {
             whileTap={{ scale: 0.95 }}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
+            {isSubmitting ? 'Sending...' :  'Send Message'}
           </motion.button>
         </div>
       </motion.form>
-      {submitSuccess && (
+      {submitStatus === 'success' && (
         <motion.div
           className="mt-4 p-4 bg-green-100 text-green-700 rounded"
           initial={{ opacity: 0, y: 20 }}
@@ -97,6 +110,16 @@ export default function Contact() {
           transition={{ duration: 0.5 }}
         >
           Thank you for your message! I will get back to you soon.
+        </motion.div>
+      )}
+      {submitStatus === 'error' && (
+        <motion.div
+          className="mt-4 p-4 bg-red-100 text-red-700 rounded"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          An error occurred while sending your message. Please try again later.
         </motion.div>
       )}
     </div>

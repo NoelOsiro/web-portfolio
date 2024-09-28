@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { AnimatePresence, motion } from "framer-motion";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import PageTransition from "@/components/PageTransition";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,6 +36,7 @@ export default function RootLayout({
         <ThemeProvider>
         <div className="flex flex-col min-h-screen">
           <Header />
+          <PageTransition>
           <AnimatePresence mode="wait">
             <motion.main 
               className="flex-grow"
@@ -46,6 +48,7 @@ export default function RootLayout({
               {children}
             </motion.main>
           </AnimatePresence>
+          </PageTransition>
           <Footer />
         </div>
         </ThemeProvider>

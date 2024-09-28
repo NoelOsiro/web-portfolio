@@ -1,8 +1,7 @@
-'use client'
-
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
+import Testimonials from '@/components/Testimonials'
 
 export default function Home() {
   const ref = useRef(null)
@@ -27,7 +26,7 @@ export default function Home() {
         transition={{ delay: 0.2 }}
       >
         <h1 className="text-4xl font-bold mb-4">Welcome to My Portfolio</h1>
-        <p className="text-xl mb-6">I&apos;m a software developer specializing in web technologies.</p>
+        <p className="text-xl mb-6">I am a software developer specializing in web technologies.</p>
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -122,6 +121,8 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
+
+      <Testimonials />
     </motion.div>
   )
 }
