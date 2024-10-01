@@ -1,12 +1,13 @@
-import { Project, BlogPost, Comment } from "@/types"
+import { client } from "@/sanity/lib/client";
+import { Project, Comment, Post } from "@/types"
 
 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/studio'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchAPI(query: string, { variables }: { variables?: any } = {}) {
-  const res = await fetch(`${API_URL}/graphql`, {
+  const res = await fetch(`${API_URL}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -47,59 +48,61 @@ export async function getProjects(): Promise<Project[]> {
   return data.projects
 }
 
-export async function getBlogPosts(searchTerm: string = ''): Promise<BlogPost[]> {
-  const BlogPostFiltersInput = {
-    "filters:": {
-      "or": [
-        { "title": { "containsi": searchTerm } },
-        { "content": { "containsi": searchTerm } }
-      ]
-    }
+// Fetch Blog Posts using GROQ
+export async function getBlogPosts(searchTerm: string = ''): Promise<Post[]> {
+  const query = `*[_type == "post" && (title match $searchTerm || body[].children[].text match $searchTerm)]{
+    _id,
+    title,
+    "slug": slug.current,
+    "mainImage": mainImage.asset->url,
+    "author": author->name,
+    "categories": categories[]->title,
+    publishedAt,
+    body,
+  } | order(publishedAt desc)`;
 
-  }
-  const data = await fetchAPI(`
-    query GetBlogPosts($filters: BlogPostFiltersInput) {
-      blogPosts(filters: $filters) {
-          documentId
-          title
-          content
-          mainimage{
-          url
-          }
-          date
-          author
-      }
-    }
-  `, {
-    variables: { BlogPostFiltersInput },
-  })
-  return data.blogPosts
+  // Fetch blog posts from Sanity
+  const blogPosts = await client.fetch(query, {
+    searchTerm: `${searchTerm}*`,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return blogPosts.map((post: any) => ({
+    id: post._id,
+    title: post.title,
+    slug: post.slug,
+    mainImage: post.mainImage,
+    author: post.author,
+    categories: post.categories,
+    publishedAt: post.publishedAt,
+    body: post.body, // Rich text, can be parsed on the frontend
+  }));
 }
 
-export async function getBlogPost(id: string): Promise<BlogPost> {
-  const data = await fetchAPI(`
-    query GetBlogPost($id: ID!) {
-      blogPost(documentId: $id) {
-        documentId
-        title
-        mainimage{
+export async function getBlogPost(id: string): Promise<Post> {
+  const query = `
+    *[_type == "post" && _id == $id] {
+      _id,
+      title,
+      body,
+      mainImage {
+        asset->{
+          _id,
           url
-          }
-        content
-        date
-        author
-      }
-    }
-  `, {
-    variables: { id },
-  })
-
-  // Ensure that data is correctly retrieved and structured
-  if (!data || !data.blogPost) {
-    throw new Error('Post not found')
-  }
-
-  return data.blogPost
+        }
+      },
+      date,
+      author->{
+        name,
+        image
+      },
+      publishedAt,
+    }[0]
+  `;
+  const blogPost = await client.fetch(query, {
+    id: `${id}`,
+  });
+  return blogPost; // This will return the post object
 }
 
 

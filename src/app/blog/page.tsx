@@ -5,14 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { getBlogPosts } from '@/services/api'
 import { Search } from 'lucide-react'
-import { BlogPost } from '@/types'
+import { Post } from '@/types'
 import OptimizedImage from '@/components/OptimizedImage'
+import { urlFor } from '@/sanity/lib/image'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
+
 
 
 export default function Blog() {
-  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [posts, setPosts] = useState<Post[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
@@ -72,7 +73,7 @@ export default function Blog() {
         >
           {posts.map((post, index) => (
             <motion.div 
-              key={post.documentId}
+              key={post.id}
               className="border dark:border-gray-700 rounded-lg overflow-hidden shadow-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -80,9 +81,9 @@ export default function Blog() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               layout
             >
-              <Link href={`/blog/${post.documentId}`}>
+              <Link href={`/blog/${post.id}`}>
                 <OptimizedImage 
-                  src={`${API_URL}${post.mainimage.url}`} 
+                  src={urlFor(post.mainImage).url()} 
                   alt={post.title} 
                   width={300} 
                   height={200} 
@@ -92,7 +93,7 @@ export default function Blog() {
                   <h2 className="text-2xl font-semibold mb-2">{post.title}</h2>
                   <p className="text-gray-600 dark:text-gray-300 mb-4">{post.title}</p>
                   <div className="flex flex-wrap gap-2">
-                  <Link href={`/blog/${post.documentId}`} className="text-blue-600 dark:text-blue-400 hover:underline inline-block">
+                  <Link href={`/blog/${post.id}`} className="text-blue-600 dark:text-blue-400 hover:underline inline-block">
                     Read more
                   </Link>
                   </div>

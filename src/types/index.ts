@@ -1,3 +1,4 @@
+import { TypedObject } from "sanity";
 
   
   export interface BlogPost {
@@ -33,4 +34,23 @@ export interface Comment {
   author: string
   content: string
   createdAt: string
+}
+
+export interface Post {
+  id: string
+  title: string
+  slug: string
+  mainImage: string
+  content: string
+  author: Author
+  categories: string[]
+  publishedAt: string
+  body: TypedObject | TypedObject[]
+
+}
+
+interface Author {
+  name: string
+  image: string
+
 }
