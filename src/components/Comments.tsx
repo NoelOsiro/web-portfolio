@@ -14,14 +14,15 @@ export default function Comments({ postId }: CommentsProps) {
   const [newComment, setNewComment] = useState({ author: '', content: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  
+
   useEffect(() => {
+    const fetchComments = async () => {
+      const fetchedComments = await getComments(postId)
+      setComments(fetchedComments)
+    }
     fetchComments()
   }, [postId])
-
-  const fetchComments = async () => {
-    const fetchedComments = await getComments(postId)
-    setComments(fetchedComments)
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,24 +40,27 @@ export default function Comments({ postId }: CommentsProps) {
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Comments</h2>
-      <AnimatePresence>
+      {comments.length > 0 ? (
+        <AnimatePresence>
         {comments.map((comment, index) => (
           <motion.div
-            key={comment.id}
+            key={comment.documentId}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
             className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4"
           >
-            <p className="font-semibold">{comment.attributes.author}</p>
+            <p className="font-semibold">{comment.author}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {new Date(comment.attributes.createdAt).toLocaleString()}
+              {new Date(comment.createdAt).toLocaleString()}
             </p>
-            <p className="mt-2">{comment.attributes.content}</p>
+            <p className="mt-2">{comment.content}</p>
           </motion.div>
         ))}
-      </AnimatePresence>
+      </AnimatePresence>) : null
+        }
+      
       <form onSubmit={handleSubmit} className="mt-6">
         <div className="mb-4">
           <label htmlFor="author" className="block text-sm font-medium text-gray-700 dark:text-gray-300">

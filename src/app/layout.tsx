@@ -1,11 +1,10 @@
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/Header";
-import { AnimatePresence, motion } from "framer-motion";
-import Footer from "@/components/Footer";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import PageTransition from "@/components/PageTransition";
+
+
+import { PageSetup } from "@/components/PageSetup";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,6 +22,9 @@ export const metadata: Metadata = {
   description: 'Portfolio and blog of Your Name, a software engineer.',
 }
 
+
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,28 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100`}
       >
-        <ThemeProvider>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <PageTransition>
-          <AnimatePresence mode="wait">
-            <motion.main 
-              className="flex-grow"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {children}
-            </motion.main>
-          </AnimatePresence>
-          </PageTransition>
-          <Footer />
-        </div>
-        </ThemeProvider>
-        
+            <PageSetup>{children}</PageSetup>
+
       </body>
     </html>
   );

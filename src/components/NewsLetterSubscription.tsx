@@ -16,6 +16,7 @@ const NewsletterSubscription = () => {
       await new Promise(resolve => setTimeout(resolve, 1000)) // Simulating API call
       setStatus('success')
       setEmail('')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setStatus('error')
     }

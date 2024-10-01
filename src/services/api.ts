@@ -1,7 +1,10 @@
-import { BlogPost, Project, Comment } from '@/types'
+import { Project, BlogPost, Comment } from "@/types"
+
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchAPI(query: string, { variables }: { variables?: any } = {}) {
   const res = await fetch(`${API_URL}/graphql`, {
     method: 'POST',
@@ -27,93 +30,96 @@ export async function getProjects(): Promise<Project[]> {
   const data = await fetchAPI(`
     query {
       projects {
-        data {
-          id
-          attributes {
-            title
-            description
-            image {
-              data {
-                attributes {
+          documentId
+          title
+          description
+          image {
                   url
                 }
-              }
-            }
-            technologies
-            longDescription
-            githubUrl
-            liveUrl
+          technologies
+          longDescription
+          githubUrl
+          liveUrl
+        }      
           }
-        }
-      }
-    }
+  
   `)
-  return data.projects.data
+  return data.projects
 }
 
 export async function getBlogPosts(searchTerm: string = ''): Promise<BlogPost[]> {
+  const BlogPostFiltersInput = {
+    "filters:": {
+      "or": [
+        { "title": { "containsi": searchTerm } },
+        { "content": { "containsi": searchTerm } }
+      ]
+    }
+
+  }
   const data = await fetchAPI(`
-    query GetBlogPosts($searchTerm: String) {
-      blogPosts(filters: { or: [
-        { title: { containsi: $searchTerm } },
-        { content: { containsi: $searchTerm } }
-      ]}) {
-        data {
-          id
-          attributes {
-            title
-            content
-            date
-            author
+    query GetBlogPosts($filters: BlogPostFiltersInput) {
+      blogPosts(filters: $filters) {
+          documentId
+          title
+          content
+          mainimage{
+          url
           }
-        }
+          date
+          author
       }
     }
   `, {
-    variables: { searchTerm },
+    variables: { BlogPostFiltersInput },
   })
-  return data.blogPosts.data
+  return data.blogPosts
 }
 
 export async function getBlogPost(id: string): Promise<BlogPost> {
   const data = await fetchAPI(`
     query GetBlogPost($id: ID!) {
-      blogPost(id: $id) {
-        data {
-          id
-          attributes {
-            title
-            content
-            date
-            author
+      blogPost(documentId: $id) {
+        documentId
+        title
+        mainimage{
+          url
           }
-        }
+        content
+        date
+        author
       }
     }
   `, {
     variables: { id },
   })
-  return data.blogPost.data
+
+  // Ensure that data is correctly retrieved and structured
+  if (!data || !data.blogPost) {
+    throw new Error('Post not found')
+  }
+
+  return data.blogPost
 }
 
+
 export async function getComments(postId: string): Promise<Comment[]> {
+  const CommentFiltersInput = {
+    "postId": { "eq": postId },
+  }
   const data = await fetchAPI(`
-    query GetComments($postId: ID!) {
-      comments(filters: { post: { id: { eq: $postId } } }) {
-        data {
-          id
-          attributes {
+    query GetComments($filters: CommentFiltersInput) {
+      comments(filters: $filters) {
+          documentId
             content
             author
             createdAt
-          }
-        }
       }
     }
   `, {
-    variables: { postId },
+    variables: { CommentFiltersInput },
   })
-  return data.comments.data
+  return data
 }
 
 export async function postComment(postId: string, content: string, author: string): Promise<Comment> {

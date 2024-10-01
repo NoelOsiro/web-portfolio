@@ -32,7 +32,8 @@ export default function Contact() {
       } else {
         setSubmitStatus('error')
       }
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+    } catch (error:any) {
       setSubmitStatus('error')
     }
     setIsSubmitting(false)

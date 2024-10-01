@@ -1,10 +1,13 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Radar } from 'react-chartjs-2'
-import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js'
+import { motion } from 'framer-motion';
+import { Radar } from 'react-chartjs-2';
+import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
+import { useTheme } from '@/components/ThemeProvider';
+import ProgressBar from '@/components/ProgressBar';
+import Image from 'next/image';
 
-ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 const skills = [
   { name: 'JavaScript', level: 90 },
@@ -13,52 +16,56 @@ const skills = [
   { name: 'TypeScript', level: 75 },
   { name: 'GraphQL', level: 70 },
   { name: 'Python', level: 65 },
-]
+];
 
 const careerHistory = [
   {
     id: 1,
-    title: 'Senior Software Engineer',
-    company: 'Tech Innovators Inc.',
-    period: '2021 - Present',
-    description: 'Leading development of cutting-edge web applications using React and Node.js.',
+    title: 'ICT Specialist',
+    company: 'Q3M Wanda Solutions.',
+    period: '2024 - Present',
+    description: 'Leading ICT projects and managing a team of developers.',
   },
   {
     id: 2,
     title: 'Full Stack Developer',
-    company: 'Digital Solutions Ltd.',
-    period: '2018 - 2021',
+    company: 'ALX Africa',
+    period: '2021 - 2022',
     description: 'Developed and maintained various web applications using MERN stack.',
   },
   {
     id: 3,
-    title: 'Junior Web Developer',
-    company: 'WebCraft Agency',
-    period: '2016 - 2018',
-    description: 'Started career working on front-end development using HTML, CSS, and JavaScript.',
+    title: 'Manual QA Tester',
+    company: 'Crossover.com',
+    period: '2022 - 2022',
+    description: 'Tested web applications and reported bugs to the development team.',
   },
-]
+];
 
 const certifications = [
   {
     id: 1,
-    name: 'AWS Certified Developer - Associate',
+    name: 'AWS Certified Solutions Architect - Associate',
     issuer: 'Amazon Web Services',
+    certificate: '2023', // Corrected capitalization to match the convention
     date: '2022',
   },
   {
     id: 2,
-    name: 'React Native Specialist',
-    issuer: 'Udacity',
+    name: 'AWS Certified Cloud Practitioner (CCP)',
+    issuer: 'Amazon Web Services',
+    certificate: '2023',
     date: '2021',
   },
   {
     id: 3,
-    name: 'Google Cloud Certified - Professional Cloud Architect',
-    issuer: 'Google Cloud',
-    date: '2020',
+    name: 'Microsoft Certified: Azure Fundamentals',
+    issuer: 'Microsoft',
+    certificate: 'AZ-900',
+    date: '2021',
   },
-]
+];
+
 
 const awards = [
   {
@@ -73,37 +80,39 @@ const awards = [
     issuer: 'GitHub',
     date: '2022',
   },
-]
+];
 
-const chartData = {
-  labels: skills.map(skill => skill.name),
-  datasets: [
-    {
-      label: 'Skill Level',
-      data: skills.map(skill => skill.level),
-      backgroundColor: 'rgba(54, 162, 235, 0.2)',
-      borderColor: 'rgb(54, 162, 235)',
-      pointBackgroundColor: 'rgb(54, 162, 235)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgb(54, 162, 235)'
-    }
-  ]
-}
+
 
 const chartOptions = {
   scales: {
     r: {
       angleLines: {
-        display: false
+        display: false,
       },
       suggestedMin: 0,
-      suggestedMax: 100
-    }
-  }
-}
+      suggestedMax: 100,
+    },
+  },
+};
 
 export default function About() {
+  const { theme } = useTheme();
+  const chartData = {
+    labels: skills.map(skill => skill.name),
+    datasets: [
+      {
+        label: 'Skill Level',
+        data: skills.map(skill => skill.level),
+        backgroundColor: theme === 'dark' ? 'rgba(236, 236, 236, 0)' : 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgb(54, 162, 235)',
+        pointBackgroundColor: 'rgb(54, 162, 235)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgb(54, 162, 235)',
+      },
+    ],
+  };
   return (
     <div className="container mx-auto px-6 py-12">
       <motion.h1 
@@ -123,11 +132,24 @@ export default function About() {
         <div>
           <h2 className="text-2xl font-semibold mb-4">My Journey</h2>
           <p className="mb-4">
-            I'm a passionate software developer with a focus on web technologies. My journey in the world of programming began in 2016 when I first discovered the power of creating things with code.
+            I am a passionate software developer with a focus on web technologies. My journey in the world of programming began in 2016 when I first discovered the power of creating things with code.
           </p>
           <p className="mb-4">
-            Since then, I've worked on a variety of projects, from small websites to large-scale applications, always striving to learn and improve my skills.
+            Since then, I have worked on a variety of projects, from small websites to large-scale applications, always striving to learn and improve my skills.
           </p>
+
+          <div style={{ padding: '20px', background: theme=== 'dark' ? '#333' : '#fff' }}>
+      <h2>Skills</h2>
+      {skills.map((skill) => (
+        <div key={skill.name} style={{ margin: '10px 0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+            <span>{skill.name}</span>
+            <span>{skill.level}%</span>
+          </div>
+          <ProgressBar value={skill.level} />
+        </div>
+      ))}
+    </div>
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-4">Skills & Expertise</h2>
@@ -177,18 +199,37 @@ export default function About() {
           <div>
             <h3 className="text-xl font-semibold mb-2">Certifications</h3>
             <ul className="space-y-4">
-              {certifications.map((cert, index) => (
-                <motion.li 
-                  key={cert.id}
-                  className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                >
-                  <h4 className="font-semibold">{cert.name}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{cert.issuer} | {cert.date}</p>
-                </motion.li>
-              ))}
+            {certifications.map((cert, index) => (
+  <motion.li
+    key={cert.id}
+    className={`p-4 rounded-lg ${
+      cert.issuer === 'Amazon Web Services'
+        ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 dark:from-yellow-500 dark:to-yellow-700'
+        : 'bg-gradient-to-r from-blue-400 to-blue-600 dark:from-blue-500 dark:to-blue-700'
+    }`}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.1, duration: 0.5 }}
+  >
+    <div className="flex items-center space-x-4">
+      {/* Icon for each issuer */}
+      {cert.issuer === 'Amazon Web Services' && (
+        <Image src="/icons/aws-icon.jpeg" width={40} height={40} alt="AWS Icon" className="w-10 h-10" />
+      )}
+      {cert.issuer === 'Microsoft' && (
+        <Image src="/icons/azure-icon.jpeg" width={40} height={40} alt="Microsoft Icon" className="w-10 h-10" />
+      )}
+
+      <div>
+        <h4 className="font-semibold text-white">{cert.name}</h4>
+        <p className="text-sm text-white">
+          {cert.issuer} | {cert.date}
+        </p>
+      </div>
+    </div>
+  </motion.li>
+))}
+
             </ul>
           </div>
           <div>
@@ -216,14 +257,9 @@ export default function About() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.5 }}
       >
-        <h2 className="text-2xl font-semibold mb-4">My Approach</h2>
-        <p className="mb-4">
-          I believe in writing clean, maintainable code and staying up-to-date with the latest industry trends and best practices. My goal is to create efficient, scalable solutions that solve real-world problems.
-        </p>
-        <p>
-          When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, and sharing my knowledge through blog posts and tech talks.
-        </p>
+        <h2 className="text-2xl font-semibold mb-4">Contact Me</h2>
+        <p>If you&apos;d like to get in touch, feel free to reach out!</p>
       </motion.div>
     </div>
-  )
+  );
 }

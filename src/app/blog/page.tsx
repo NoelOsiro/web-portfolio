@@ -4,8 +4,12 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { getBlogPosts } from '@/services/api'
-import { BlogPost } from '@/types'
 import { Search } from 'lucide-react'
+import { BlogPost } from '@/types'
+import OptimizedImage from '@/components/OptimizedImage'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
+
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -23,6 +27,7 @@ export default function Blog() {
     fetchPosts()
   }, [searchTerm])
 
+  console.log(posts)
   return (
     <div className="container mx-auto px-6 py-12">
       <motion.h1 
@@ -33,7 +38,12 @@ export default function Blog() {
       >
         Blog
       </motion.h1>
-      <div className="mb-8">
+      <motion.div 
+        className="mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
         <div className="relative">
           <input
             type="text"
@@ -44,7 +54,7 @@ export default function Blog() {
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>
-      </div>
+      </motion.div>
       {isLoading ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -56,50 +66,55 @@ export default function Blog() {
         </motion.div>
       ) : (
         <AnimatePresence>
-          {posts.length > 0 ? (
+          <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          layout
+        >
+          {posts.map((post, index) => (
             <motion.div 
-              className="space-y-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              key={post.documentId}
+              className="border dark:border-gray-700 rounded-lg overflow-hidden shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              layout
             >
-              {posts.map((post, index) => (
-                <motion.article 
-                  key={post.id}
-                  className="border-b pb-8 dark:border-gray-700"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                >
-                  <h2 className="text-2xl font-semibold mb-2">
-                    <Link href={`/blog/${post.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                      {post.attributes.title}
-                    </Link>
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    By {post.attributes.author} on {new Date(post.attributes.date).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-800 dark:text-gray-200">
-                    {post.attributes.content.substring(0, 200)}...
-                  </p>
-                  <Link href={`/blog/${post.id}`} className="text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
+              <Link href={`/blog/${post.documentId}`}>
+                <OptimizedImage 
+                  src={`${API_URL}${post.mainimage.url}`} 
+                  alt={post.title} 
+                  width={300} 
+                  height={200} 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h2 className="text-2xl font-semibold mb-2">{post.title}</h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{post.title}</p>
+                  <div className="flex flex-wrap gap-2">
+                  <Link href={`/blog/${post.documentId}`} className="text-blue-600 dark:text-blue-400 hover:underline inline-block">
                     Read more
                   </Link>
-                </motion.article>
-              ))}
+                  </div>
+                </div>
+              </Link>
             </motion.div>
-          ) : (
+          ))}
+        </motion.div>
+        </AnimatePresence>
+        
+      )}
+      {posts.length === 0 && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center"
+              key="empty"
+              className="text-2xl h-96 m-auto flex justify-center items-center font-semibold col-span-3 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
             >
-              No blog posts found.
+              No projects found
             </motion.div>
           )}
-        </AnimatePresence>
-      )}
     </div>
   )
 }

@@ -7,21 +7,21 @@ const testimonials = [
     name: 'John Doe',
     role: 'CEO, TechCorp',
     content: 'Working with this developer was an absolute pleasure. Their technical skills and attention to detail resulted in a product that exceeded our expectations.',
-    avatar: '/placeholder.svg?height=80&width=80',
+    avatar: '/images/image.png',
   },
   {
     id: 2,
     name: 'Jane Smith',
     role: 'CTO, InnovateTech',
     content: 'I was impressed by the developer\'s ability to quickly grasp complex concepts and deliver elegant solutions. They are a valuable asset to any team.',
-    avatar: '/placeholder.svg?height=80&width=80',
+    avatar: '/images/image.png',
   },
   {
     id: 3,
     name: 'Alex Johnson',
     role: 'Project Manager, WebSolutions',
     content: 'The developer\'s commitment to quality and timely delivery made our project a success. I highly recommend their services.',
-    avatar: '/placeholder.svg?height=80&width=80',
+    avatar: '/images/image.png',
   },
 ]
 
