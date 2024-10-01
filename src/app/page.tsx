@@ -1,13 +1,18 @@
 'use client'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Testimonials from '@/components/Testimonials'
 import Image from 'next/image'
 import ProjectItem from '@/components/ProjectCard'
+import { getBlogPosts } from '@/services/api'
+import { Post } from '@/types'
+import { urlFor } from '@/sanity/lib/image'
 
 
 export default function Home() {
+
+  
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -130,68 +135,78 @@ function FeaturesSection() {
 }
 
 
-function BlogCard() {
-  return (<motion.div className="border p-4 rounded-lg shadow-lg" whileHover={{
-    scale: 1.05
-  }} transition={{
-    type: 'spring',
-    stiffness: 300
-  }}>
-    {
-      /* Blog Post Image */
-    }
-    <Image src="/images/image.png" alt="Blog Post 1" width={640} height={360} className="w-full h-48 object-cover rounded-t-lg mb-4" />
-
-    {
-      /* Blog Post Title */
-    }
-    <h3 className="font-bold text-lg mb-2">Blog Post 1</h3>
-
-    {
-      /* Blog Post Excerpt */
-    }
-    <p className="mb-4">A brief excerpt or introduction to Blog Post 1, providing a glimpse of the topic discussed.</p>
-
-    {
-      /* Tags or Categories */
-    }
-    <div className="flex space-x-2 items-center">
-      <span className="text-xs bg-blue-100 text-blue-500 py-1 px-2 rounded">Category 1</span>
-      <span className="text-xs bg-green-100 text-green-500 py-1 px-2 rounded">Category 2</span>
-      <span className="text-xs bg-yellow-100 text-yellow-500 py-1 px-2 rounded">Category 3</span>
-    </div>
-  </motion.div>);
+function BlogCard({ post }:{ post: Post }) {
+  return (
+    <motion.div
+      className="border p-4 rounded-lg shadow-lg"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+    >
+      <Image
+        src={urlFor(post.mainImage).url()}// Assuming post has an imageUrl property
+        alt={post.title} // Assuming post has a title property
+        width={640}
+        height={360}
+        className="w-full h-48 object-cover rounded-t-lg mb-4"
+      />
+      <h3 className="font-bold text-lg mb-2">{post.title}</h3>
+      <p className="mb-4">{post.description}</p>
+      <div className="flex space-x-2 items-center">
+        {/* {post.categories.map((category, index) => (
+          <span key={index} className={`text-xs bg-${category.color}-100 text-${category.color}-500 py-1 px-2 rounded`}>
+            {category.name}
+          </span>
+        ))} */}
+      </div>
+    </motion.div>
+  );
 }
 
-
 function BlogPosts() {
-  return (<motion.section initial={{
-    opacity: 0,
-    y: 20
-  }} animate={{
-    opacity: 1,
-    y: 0
-  }} transition={{
-    delay: 0.8
-  }}>
-    <div className="text-center mb-8 relative">
-      <h2 className="text-2xl font-bold mb-4">Latest BlogPosts</h2>
-      <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full transition-all duration-300 ease-in-out group hover:w-32"></div>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <BlogCard/>
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(''); // For error handling
 
-      <BlogCard/>
-    </div>
-    <div className="mt-4">
-      <motion.div whileHover={{
-        scale: 1.05
-      }} whileTap={{
-        scale: 0.95
-      }}>
-        <Link href="/blog" className="text-blue-500 hover:underline">Read all blog posts</Link>
-      </motion.div>
-    </div>
-  </motion.section>);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedPosts = await getBlogPosts('');
+        setPosts(fetchedPosts);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to fetch posts.'); // Set error state
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.8 }}
+    >
+      <div className="text-center mb-8 relative">
+        <h2 className="text-2xl font-bold mb-4">Latest Posts</h2>
+        <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full transition-all duration-300 ease-in-out group hover:w-32"></div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {isLoading && <p>Loading...</p>} {/* Loading indicator */}
+        {error && <p className="text-red-500">{error}</p>} {/* Error message */}
+        {posts.map((post) => (
+          <BlogCard key={post.id} post={post} /> // Dynamically rendering BlogCards
+        ))}
+      </div>
+      <div className="mt-4">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Link href="/blog" className="text-blue-500 hover:underline">Read all blog posts</Link>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
 }
 

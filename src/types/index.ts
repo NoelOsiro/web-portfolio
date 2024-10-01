@@ -41,6 +41,7 @@ export interface Post {
   title: string
   slug: string
   mainImage: string
+  description: string
   content: string
   author: Author
   categories: string[]
