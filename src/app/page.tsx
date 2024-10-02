@@ -46,7 +46,7 @@ function HeaderSection() {
       transition={{ delay: 0.2 }}
     >
       {/* Text Section */}
-      <div className="w-full lg:w-1/2 text-center lg:text-left px-4 mt-6 lg:mt-0">
+      <div className="w-full lg:w-2/3 text-center lg:text-left px-4 mt-6 lg:mt-0">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2 lg:mb-4 text-gray-800 dark:text-gray-100">
           Software Engineer,
         </h1>
@@ -70,17 +70,18 @@ function HeaderSection() {
             Let’s Build Together
           </Link>
         </motion.div>
-      </div>
+      </div> 
 
       {/* Image Section */}
-      <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
-        <motion.img
+      <motion.div className="w-full lg:w-1/3 mb-6 lg:mb-0" whileHover={{ scale: 1.05 }}>
+        <Image
           src="/images/prof.jpg" // Update with your image path
           alt="Profile picture"
-          className="w-full h-auto max-w-sm mx-auto lg:mx-0 rounded-lg shadow-lg"
-          whileHover={{ scale: 1.05 }}
+          className="w-full h-auto max-w-sm mx-auto lg:mx-0 rounded-lg shadow-lg " 
+          width={600}
+          height={400}          
         />
-      </div>
+      </motion.div>
     </motion.section>
   )
 }
@@ -102,10 +103,10 @@ function AboutSection() {
       </div>
 
       {/* Description */}
-      <p className="mb-4 text-lg leading-relaxed">
+      <p className="mb-4 text-lg leading-relaxed text-center px-8">
         I am a passionate software developer with a deep interest in crafting efficient and scalable web solutions. My experience spans across a range of technologies, from front-end frameworks like React and Next.js to back-end services with Node.js and databases like Supabase.
       </p>
-      <p className="mb-6 text-lg leading-relaxed">
+      <p className="mb-6 text-lg leading-relaxed text-center px-8">
         Whether it&apos;s designing seamless user interfaces or building robust APIs, I am committed to delivering high-quality, performant applications. I enjoy tackling challenges head-on and continuously learning to keep up with the ever-evolving tech landscape.
       </p>
 
