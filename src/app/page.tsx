@@ -89,7 +89,7 @@ function HeaderSection() {
 function AboutSection() {
   return (
     <motion.section
-      className="mb-12 px-6 py-8 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md"
+      className="my-12 px-6 py-8 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
@@ -141,7 +141,7 @@ function FeaturesSection() {
 
   return (
     <motion.section
-      className="mb-12"
+      className="my-12"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6 }}
@@ -165,7 +165,7 @@ function FeaturesSection() {
         ))}
       </div>
 
-      <div className="mt-4 text-center">
+      <div className="mt-8 text-center">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Link href="/projects" className="text-blue-500 hover:underline text-lg font-semibold">
 
@@ -245,9 +245,13 @@ function BlogPosts() {
           <BlogCard key={post.id} post={post} /> // Dynamically rendering BlogCards
         ))}
       </div>
-      <div className="mt-4">
+      <div className="mt-8 text-center">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link href="/blog" className="text-blue-500 hover:underline">Read all blog posts</Link>
+          <Link href="/blog" className="text-blue-500 hover:underline text-lg font-semibold">
+
+              View all posts
+
+          </Link>
         </motion.div>
       </div>
     </motion.section>
