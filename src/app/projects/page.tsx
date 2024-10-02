@@ -6,8 +6,8 @@ import Link from 'next/link'
 import { getProjects } from '@/services/api'
 import OptimizedImage from '@/components/OptimizedImage'
 import { Project } from '@/types'
+import { urlFor } from '@/sanity/lib/image'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([])
@@ -84,7 +84,7 @@ export default function Projects() {
          
           {filteredProjects.map((project, index) => (
             <motion.div 
-              key={project.documentId}
+              key={project._id}
               className="border dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -92,9 +92,9 @@ export default function Projects() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               layout
             >
-              <Link href={`/projects/${project.documentId}`}>
+              <Link href={`/projects/${project._id}`}>
                 <OptimizedImage 
-                  src={`${API_URL}${project.image.url}`} 
+                  src={urlFor(project.imageUrl).width(600).height(400).url()} 
                   alt={project.title} 
                   width={300} 
                   height={200} 
