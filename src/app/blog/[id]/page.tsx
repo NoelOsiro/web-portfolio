@@ -6,7 +6,6 @@ import { notFound, useParams } from 'next/navigation';
 import Comments from '@/components/Comments';
 import { Post } from '@/types';
 import OptimizedImage from '@/components/OptimizedImage';
-import './post.css';
 import { urlFor } from '@/sanity/lib/image';
 import Image from 'next/image';
 import { PortableText } from '@portabletext/react';

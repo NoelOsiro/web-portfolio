@@ -14,7 +14,7 @@ interface PageSetupProps {
 export  function PageSetup({ children }: PageSetupProps) {
     return (
       <ThemeProvider>
-        <div className="flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col min-h-screen  sm:px-6 lg:px-8">
   <Header />
   <PageTransition>
     <AnimatePresence mode="wait">

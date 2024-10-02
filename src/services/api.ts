@@ -27,25 +27,40 @@ async function fetchAPI(query: string, { variables }: { variables?: any } = {}) 
   return json.data
 }
 
+
 export async function getProjects(): Promise<Project[]> {
-  const data = await fetchAPI(`
-    query {
-      projects {
-          documentId
-          title
-          description
-          image {
-                  url
-                }
-          technologies
-          longDescription
-          githubUrl
-          liveUrl
-        }      
-          }
-  
-  `)
-  return data.projects
+  const query = `*[_type == "project"]{
+    _id,
+    title,
+    description,
+    "imageUrl": mainImage.asset->url,
+    author->{
+        name,
+        image
+      },
+    githubUrl,
+    liveUrl,
+    body,
+    publishedAt,
+    technologies
+  }`;
+  const projects = await client.fetch(query);
+  return projects;
+}
+
+//fetch project by id
+export async function getProjectById(id: string): Promise<Project> {
+  const query = `*[_type == "project" && _id == $id]{
+    _id,
+    title,
+    description,
+    "imageUrl": mainImage.asset->url,
+    githubUrl,
+    liveUrl,
+    technologies
+  }`;
+  const project = await client.fetch(query, { id });
+  return project[0];
 }
 
 // Fetch Blog Posts using GROQ

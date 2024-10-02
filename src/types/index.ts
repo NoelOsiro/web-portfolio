@@ -13,18 +13,19 @@ import { TypedObject } from "sanity";
   }
   
 
-export interface Project {
-  
-  documentId: string ; // depending on how your Strapi model is structured
-  title: string;
-  description: string;
-  technologies: string[];
-  image: {
-        url: string;
-  };
-  githubUrl: string;
-  liveUrl: string;
-}
+  export interface Project {
+    _id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    githubUrl: string;
+    liveUrl: string;
+    author: Author;
+    publishedAt: string;
+    technologies: string[];
+    body: TypedObject | TypedObject[]
+
+  }
 
 // types.ts or Comment.ts
 
